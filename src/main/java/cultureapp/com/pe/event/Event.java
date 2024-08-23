@@ -2,7 +2,7 @@ package cultureapp.com.pe.event;
 
 import cultureapp.com.pe.common.BaseEntity;
 import cultureapp.com.pe.feedback.Feedback;
-import cultureapp.com.pe.history.BookTransactionHistory;
+import cultureapp.com.pe.history.EventTransactionHistory;
 import cultureapp.com.pe.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -23,22 +23,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class Book extends BaseEntity {
+public class Event extends BaseEntity {
 
     private String title;
     private String authorName;
     private String isbn;
     private String synopsis;
-    private String bookCover;
+    private String eventCover;
     private boolean archived;
     private boolean shareable;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;
-    @OneToMany(mappedBy = "book")
+    @OneToMany(mappedBy = "event")
     private List<Feedback> feedbacks;
-    @OneToMany(mappedBy = "book")
-    private List<BookTransactionHistory> histories;
+    @OneToMany(mappedBy = "event")
+    private List<EventTransactionHistory> histories;
 
     @Transient
     public double getRate() {

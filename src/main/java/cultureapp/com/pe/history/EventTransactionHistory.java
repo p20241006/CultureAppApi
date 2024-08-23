@@ -1,7 +1,7 @@
 package cultureapp.com.pe.history;
 
-import cultureapp.com.pe.event.Book;
 import cultureapp.com.pe.common.BaseEntity;
+import cultureapp.com.pe.event.Event;
 import cultureapp.com.pe.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -18,14 +18,14 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class BookTransactionHistory extends BaseEntity {
+public class EventTransactionHistory extends BaseEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @JoinColumn(name = "event_id")
+    private Event event;
     private boolean returned;
     private boolean returnApproved;
 }

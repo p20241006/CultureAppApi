@@ -1,6 +1,7 @@
 package cultureapp.com.pe.feedback;
 
-import cultureapp.com.pe.event.Book;
+
+import cultureapp.com.pe.event.Event;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -11,8 +12,8 @@ public class FeedbackMapper {
         return Feedback.builder()
                 .note(request.note())
                 .comment(request.comment())
-                .book(Book.builder()
-                        .id(request.bookId())
+                .event(Event.builder()
+                        .id(request.eventId())
                         .shareable(false) // Not required and has no impact :: just to satisfy lombok
                         .archived(false) // Not required and has no impact :: just to satisfy lombok
                         .build()

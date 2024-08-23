@@ -11,7 +11,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BorrowedBookResponse {
+public class BorrowedEventResponse {
 
     private Integer id;
     private String title;

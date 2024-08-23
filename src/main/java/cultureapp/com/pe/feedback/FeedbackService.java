@@ -1,7 +1,7 @@
 package cultureapp.com.pe.feedback;
 
-import cultureapp.com.pe.event.Book;
-import cultureapp.com.pe.event.BookRepository;
+import cultureapp.com.pe.event.Event;
+import cultureapp.com.pe.event.EventRepository;
 import cultureapp.com.pe.common.PageResponse;
 import cultureapp.com.pe.exception.OperationNotPermittedException;
 import cultureapp.com.pe.user.User;
@@ -22,28 +22,28 @@ import java.util.Objects;
 public class FeedbackService {
 
     private final FeedBackRepository feedBackRepository;
-    private final BookRepository bookRepository;
+    private final EventRepository eventRepository;
     private final FeedbackMapper feedbackMapper;
 
     public Integer save(FeedbackRequest request, Authentication connectedUser) {
-        Book book = bookRepository.findById(request.bookId())
-                .orElseThrow(() -> new EntityNotFoundException("No book found with ID:: " + request.bookId()));
-        if (book.isArchived() || !book.isShareable()) {
-            throw new OperationNotPermittedException("You cannot give a feedback for and archived or not shareable book");
+        Event event = eventRepository.findById(request.eventId())
+                .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + request.eventId()));
+        if (event.isArchived() || !event.isShareable()) {
+            throw new OperationNotPermittedException("You cannot give a feedback for and archived or not shareable event");
         }
         User user = ((User) connectedUser.getPrincipal());
-        if (Objects.equals(book.getOwner().getId(), user.getId())) {
-            throw new OperationNotPermittedException("You cannot give feedback to your own book");
+        if (Objects.equals(event.getOwner().getId(), user.getId())) {
+            throw new OperationNotPermittedException("You cannot give feedback to your own event");
         }
         Feedback feedback = feedbackMapper.toFeedback(request);
         return feedBackRepository.save(feedback).getId();
     }
 
     @Transactional
-    public PageResponse<FeedbackResponse> findAllFeedbacksByBook(Integer bookId, int page, int size, Authentication connectedUser) {
+    public PageResponse<FeedbackResponse> findAllFeedbacksByEvent(Integer eventId, int page, int size, Authentication connectedUser) {
         Pageable pageable = PageRequest.of(page, size);
         User user = ((User) connectedUser.getPrincipal());
-        Page<Feedback> feedbacks = feedBackRepository.findAllByBookId(bookId, pageable);
+        Page<Feedback> feedbacks = feedBackRepository.findAllByEventId(eventId, pageable);
         List<FeedbackResponse> feedbackResponses = feedbacks.stream()
                 .map(f -> feedbackMapper.toFeedbackResponse(f, user.getId()))
                 .toList();

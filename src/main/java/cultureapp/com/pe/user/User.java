@@ -1,7 +1,8 @@
 package cultureapp.com.pe.user;
 
-import cultureapp.com.pe.event.Book;
-import cultureapp.com.pe.history.BookTransactionHistory;
+
+import cultureapp.com.pe.event.Event;
+import cultureapp.com.pe.history.EventTransactionHistory;
 import cultureapp.com.pe.role.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -57,9 +58,9 @@ public class User implements UserDetails, Principal {
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
     @OneToMany(mappedBy = "owner")
-    private List<Book> books;
+    private List<Event> events;
     @OneToMany(mappedBy = "user")
-    private List<BookTransactionHistory> histories;
+    private List<EventTransactionHistory> histories;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

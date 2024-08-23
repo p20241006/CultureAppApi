@@ -1,7 +1,8 @@
 package cultureapp.com.pe.feedback;
 
-import cultureapp.com.pe.event.Book;
+
 import cultureapp.com.pe.common.BaseEntity;
+import cultureapp.com.pe.event.Event;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -24,6 +25,6 @@ public class Feedback extends BaseEntity {
     private Double note;
     private String comment;
     @ManyToOne
-    @JoinColumn(name = "book_id")
-    private Book book;
+    @JoinColumn(name = "event_id")
+    private Event event;
 }

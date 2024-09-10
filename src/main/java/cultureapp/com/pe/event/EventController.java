@@ -59,8 +59,8 @@ public class EventController {
         return ResponseEntity.ok(service.findAllEventsByOwner(page, size, connectedUser));
     }
 
-    @GetMapping("/borrowed")
-    public ResponseEntity<PageResponse<BorrowedEventResponse>> findAllBorrowedEvents(
+    @GetMapping("/preferences_user")
+    public ResponseEntity<PageResponse<ScoredEventResponse>> findAllScoredEvents(
             @RequestParam(name = "page", defaultValue = "0", required = false) int page,
             @RequestParam(name = "size", defaultValue = "10", required = false) int size,
             Authentication connectedUser
@@ -68,14 +68,6 @@ public class EventController {
         return ResponseEntity.ok(service.findAllBorrowedEvents(page, size, connectedUser));
     }
 
-    @GetMapping("/returned")
-    public ResponseEntity<PageResponse<BorrowedEventResponse>> findAllReturnedEvents(
-            @RequestParam(name = "page", defaultValue = "0", required = false) int page,
-            @RequestParam(name = "size", defaultValue = "10", required = false) int size,
-            Authentication connectedUser
-    ) {
-        return ResponseEntity.ok(service.findAllReturnedEvents(page, size, connectedUser));
-    }
 
     @PatchMapping("/shareable/{event-id}")
     public ResponseEntity<Integer> updateShareableStatus(
@@ -93,29 +85,6 @@ public class EventController {
         return ResponseEntity.ok(service.updateArchivedStatus(eventId, connectedUser));
     }
 
-    @PostMapping("borrow/{event-id}")
-    public ResponseEntity<Integer> borrowEvent(
-            @PathVariable("event-id") Integer eventId,
-            Authentication connectedUser
-    ) {
-        return ResponseEntity.ok(service.borrowEvent(eventId, connectedUser));
-    }
-
-    @PatchMapping("borrow/return/{event-id}")
-    public ResponseEntity<Integer> returnBorrowEvent(
-            @PathVariable("event-id") Integer eventId,
-            Authentication connectedUser
-    ) {
-        return ResponseEntity.ok(service.returnBorrowedEvent(eventId, connectedUser));
-    }
-
-    @PatchMapping("borrow/return/approve/{event-id}")
-    public ResponseEntity<Integer> approveReturnBorrowEvent(
-            @PathVariable("event-id") Integer eventId,
-            Authentication connectedUser
-    ) {
-        return ResponseEntity.ok(service.approveReturnBorrowedEvent(eventId, connectedUser));
-    }
 
     @PostMapping(value = "/cover/{event-id}", consumes = "multipart/form-data")
     public ResponseEntity<?> uploadEventCoverPicture(

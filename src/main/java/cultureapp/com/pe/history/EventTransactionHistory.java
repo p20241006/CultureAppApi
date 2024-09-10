@@ -26,6 +26,5 @@ public class EventTransactionHistory extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
-    private boolean returned;
-    private boolean returnApproved;
+
 }

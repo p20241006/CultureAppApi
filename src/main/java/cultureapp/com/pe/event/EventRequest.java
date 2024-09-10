@@ -10,13 +10,13 @@ public record EventRequest(
         String title,
         @NotNull(message = "101")
         @NotEmpty(message = "101")
-        String authorName,
+        String description,
         @NotNull(message = "102")
         @NotEmpty(message = "102")
-        String isbn,
+        String urlEvent,
         @NotNull(message = "103")
         @NotEmpty(message = "103")
-        String synopsis,
+        String imgEvent,
         boolean shareable
 ) {
 }

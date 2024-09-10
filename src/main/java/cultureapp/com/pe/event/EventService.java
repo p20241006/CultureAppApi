@@ -105,114 +105,32 @@ public class EventService {
         return eventId;
     }
 
-    public Integer borrowEvent(Integer eventId, Authentication connectedUser) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + eventId));
-        if (event.isArchived() || !event.isShareable()) {
-            throw new OperationNotPermittedException("The requested event cannot be borrowed since it is archived or not shareable");
-        }
-        User user = ((User) connectedUser.getPrincipal());
-        if (Objects.equals(event.getOwner().getId(), user.getId())) {
-            throw new OperationNotPermittedException("You cannot borrow your own event");
-        }
-        final boolean isAlreadyBorrowedByUser = transactionHistoryRepository.isAlreadyBorrowedByUser(eventId, user.getId());
-        if (isAlreadyBorrowedByUser) {
-            throw new OperationNotPermittedException("You already borrowed this event and it is still not returned or the return is not approved by the owner");
-        }
-
-        final boolean isAlreadyBorrowedByOtherUser = transactionHistoryRepository.isAlreadyBorrowed(eventId);
-        if (isAlreadyBorrowedByOtherUser) {
-            throw new OperationNotPermittedException("Te requested event is already borrowed");
-        }
-
-        EventTransactionHistory eventTransactionHistory = EventTransactionHistory.builder()
-                .user(user)
-                .event(event)
-                .returned(false)
-                .returnApproved(false)
-                .build();
-        return transactionHistoryRepository.save(eventTransactionHistory).getId();
-
-    }
-
-    public Integer returnBorrowedEvent(Integer eventId, Authentication connectedUser) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + eventId));
-        if (event.isArchived() || !event.isShareable()) {
-            throw new OperationNotPermittedException("The requested event is archived or not shareable");
-        }
-        User user = ((User) connectedUser.getPrincipal());
-        if (Objects.equals(event.getOwner().getId(), user.getId())) {
-            throw new OperationNotPermittedException("You cannot borrow or return your own event");
-        }
-
-        EventTransactionHistory eventTransactionHistory = transactionHistoryRepository.findByEventIdAndUserId(eventId, user.getId())
-                .orElseThrow(() -> new OperationNotPermittedException("You did not borrow this event"));
-
-        eventTransactionHistory.setReturned(true);
-        return transactionHistoryRepository.save(eventTransactionHistory).getId();
-    }
-
-    public Integer approveReturnBorrowedEvent(Integer eventId, Authentication connectedUser) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + eventId));
-        if (event.isArchived() || !event.isShareable()) {
-            throw new OperationNotPermittedException("The requested event is archived or not shareable");
-        }
-        User user = ((User) connectedUser.getPrincipal());
-        if (!Objects.equals(event.getOwner().getId(), user.getId())) {
-            throw new OperationNotPermittedException("You cannot approve the return of a event you do not own");
-        }
-
-        EventTransactionHistory eventTransactionHistory = transactionHistoryRepository.findByEventIdAndOwnerId(eventId, user.getId())
-                .orElseThrow(() -> new OperationNotPermittedException("The event is not returned yet. You cannot approve its return"));
-
-        eventTransactionHistory.setReturnApproved(true);
-        return transactionHistoryRepository.save(eventTransactionHistory).getId();
-    }
 
     public void uploadEventCoverPicture(MultipartFile file, Authentication connectedUser, Integer eventId) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + eventId));
         User user = ((User) connectedUser.getPrincipal());
         var profilePicture = fileStorageService.saveFile(file, eventId, user.getId());
-        event.setEventCover(profilePicture);
+        event.setCompany(profilePicture);
         eventRepository.save(event);
     }
 
-    public PageResponse<BorrowedEventResponse> findAllBorrowedEvents(int page, int size, Authentication connectedUser) {
+    public PageResponse<ScoredEventResponse> findAllBorrowedEvents(int page, int size, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<EventTransactionHistory> allBorrowedEvents = transactionHistoryRepository.findAllBorrowedEvents(pageable, user.getId());
-        List<BorrowedEventResponse> eventsResponse = allBorrowedEvents.stream()
-                .map(eventMapper::toBorrowedEventResponse)
+        Page<EventTransactionHistory> allScoredEvents = transactionHistoryRepository.findAllScoredEvents(pageable, user.getId());
+        List<ScoredEventResponse> eventsResponse = allScoredEvents.stream()
+                .map(eventMapper::toScoredEventResponse)
                 .toList();
         return new PageResponse<>(
                 eventsResponse,
-                allBorrowedEvents.getNumber(),
-                allBorrowedEvents.getSize(),
-                allBorrowedEvents.getTotalElements(),
-                allBorrowedEvents.getTotalPages(),
-                allBorrowedEvents.isFirst(),
-                allBorrowedEvents.isLast()
+                allScoredEvents.getNumber(),
+                allScoredEvents.getSize(),
+                allScoredEvents.getTotalElements(),
+                allScoredEvents.getTotalPages(),
+                allScoredEvents.isFirst(),
+                allScoredEvents.isLast()
         );
     }
 
-    public PageResponse<BorrowedEventResponse> findAllReturnedEvents(int page, int size, Authentication connectedUser) {
-        User user = ((User) connectedUser.getPrincipal());
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<EventTransactionHistory> allBorrowedEvents = transactionHistoryRepository.findAllReturnedEvents(pageable, user.getId());
-        List<BorrowedEventResponse> eventsResponse = allBorrowedEvents.stream()
-                .map(eventMapper::toBorrowedEventResponse)
-                .toList();
-        return new PageResponse<>(
-                eventsResponse,
-                allBorrowedEvents.getNumber(),
-                allBorrowedEvents.getSize(),
-                allBorrowedEvents.getTotalElements(),
-                allBorrowedEvents.getTotalPages(),
-                allBorrowedEvents.isFirst(),
-                allBorrowedEvents.isLast()
-        );
-    }
 }

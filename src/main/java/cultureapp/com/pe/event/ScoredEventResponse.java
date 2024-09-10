@@ -11,12 +11,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BorrowedEventResponse {
+public class ScoredEventResponse {
 
     private Integer id;
     private String title;
-    private String authorName;
-    private String isbn;
+    private String description;  //authorName
+    private String urlEvent;
     private double rate;
     private boolean returned;
     private boolean returnApproved;

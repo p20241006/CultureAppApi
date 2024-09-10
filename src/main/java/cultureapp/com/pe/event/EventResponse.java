@@ -15,9 +15,9 @@ public class EventResponse {
 
     private Integer id;
     private String title;
-    private String authorName;
-    private String isbn;
-    private String synopsis;
+    private String description;
+    private String urlEvent;
+    private String imgEvent;
     private String owner;
     private byte[] cover;
     private double rate;

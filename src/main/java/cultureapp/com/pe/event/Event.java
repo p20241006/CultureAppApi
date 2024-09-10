@@ -26,10 +26,10 @@ import java.util.List;
 public class Event extends BaseEntity {
 
     private String title;
-    private String authorName;
-    private String isbn;
-    private String synopsis;
-    private String eventCover;
+    private String description; //authorname
+    private String urlEvent;  //isbn
+    private String imgEvent;  //synopsis
+    private String company;  //bookcover
     private boolean archived;
     private boolean shareable;
     @ManyToOne

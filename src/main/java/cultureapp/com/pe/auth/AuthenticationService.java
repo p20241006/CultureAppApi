@@ -6,7 +6,6 @@ import cultureapp.com.pe.user.User;
 import cultureapp.com.pe.user.UserRepository;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,15 +25,17 @@ public class AuthenticationService {
     private final RoleRepository roleRepository;
 
 
-
     public void register(RegistrationRequest request) throws MessagingException {
         var userRole = roleRepository.findByName("USER")
                 // todo - better exception handling
                 .orElseThrow(() -> new IllegalStateException("ROLE USER was not initiated"));
         var user = User.builder()
-                .firstname(request.getFirstname())
-                .lastname(request.getLastname())
+                .name(request.getName())
+                .fatherSurname(request.getFatherSurname())
+                .motherSurname(request.getMatherSurname())
+                .age(request.getAge())
                 .email(request.getEmail())
+                .gender(request.getGender())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .accountLocked(false)
                 .enabled(true)
@@ -57,7 +58,7 @@ public class AuthenticationService {
 
         var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
         return AuthenticationResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
                 .build();
     }
 

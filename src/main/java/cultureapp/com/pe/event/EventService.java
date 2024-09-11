@@ -115,7 +115,7 @@ public class EventService {
         eventRepository.save(event);
     }
 
-    public PageResponse<ScoredEventResponse> findAllBorrowedEvents(int page, int size, Authentication connectedUser) {
+    public PageResponse<ScoredEventResponse> findAllScoredEvents(int page, int size, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
         Page<EventTransactionHistory> allScoredEvents = transactionHistoryRepository.findAllScoredEvents(pageable, user.getId());

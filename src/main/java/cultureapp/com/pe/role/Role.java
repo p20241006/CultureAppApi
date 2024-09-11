@@ -34,19 +34,19 @@ public class Role {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column(unique = true)
+    @Column(name="nombre",unique = true)
     private String name;
-    @Column(unique = true)
+    @Column(name="descripcion",unique = true)
     private String description;
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private List<User> user;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(name="fecha_creacion",nullable = false, updatable = false)
     private LocalDateTime createdDate;
 
     @LastModifiedDate
-    @Column(insertable = false)
+    @Column(name="fecha_modificacion",insertable = false)
     private LocalDateTime lastModifiedDate;
 }

@@ -32,6 +32,7 @@ public class Event extends BaseEntity {
     private String company;  //bookcover
     private boolean archived;
     private boolean shareable;
+    //private boolean favorite;
     @ManyToOne
     @JoinColumn(name = "owner_id")
     private User owner;

@@ -14,6 +14,7 @@ import lombok.Setter;
 public class ScoredEventResponse {
 
     private Integer id;
+    private Integer id_User;
     private String title;
     private String description;  //authorName
     private String urlEvent;

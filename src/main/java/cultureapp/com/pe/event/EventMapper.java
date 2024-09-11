@@ -36,6 +36,7 @@ public class EventMapper {
     public ScoredEventResponse toScoredEventResponse(EventTransactionHistory history) {
         return ScoredEventResponse.builder()
                 .id(history.getEvent().getId())
+                .id_User(history.getUser().getId())
                 .title(history.getEvent().getTitle())
                 .description(history.getEvent().getDescription())
                 .urlEvent(history.getEvent().getUrlEvent())

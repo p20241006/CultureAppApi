@@ -12,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
@@ -47,14 +48,42 @@ public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue
     private Integer id;
-    private String firstname;
-    private String lastname;
-    private LocalDate dateOfBirth;
+
+    @Column(name = "nombre", length = 50)
+    private String name;
+
+    @Column(name = "apellido_materno", length = 50)
+    private String motherSurname;
+
+    @Column(name = "apellido_paterno", length = 50)
+    private String fatherSurname;
+
     @Column(unique = true)
     private String email;
+
     private String password;
+
+    @Column(name = "edad")
+    private Integer age;
+
+    @Column(name = "telefono", length = 50)
+    private String phone;
+
+    @Column(name = "ciudad", length = 50)
+    private String city;
+
+    @Column(name = "genero", length = 50)
+    private String gender;
+
+    @Column(name = "foto")
+    private String photo;
+
+    @Column(name = "cuenta_bloqueada")
     private boolean accountLocked;
+
+    @Column(name="cuenta_activa")
     private boolean enabled;
+
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
     @OneToMany(mappedBy = "owner")
@@ -63,11 +92,11 @@ public class User implements UserDetails, Principal {
     private List<EventTransactionHistory> histories;
 
     @CreatedDate
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false, name = "fecha_creacion", updatable = false)
     private LocalDateTime createdDate;
 
     @LastModifiedDate
-    @Column(insertable = false)
+    @Column(insertable = false, name = "fecha_modificacion")
     private LocalDateTime lastModifiedDate;
 
     @Override
@@ -108,16 +137,16 @@ public class User implements UserDetails, Principal {
         return enabled;
     }
 
-    public String fullName() {
-        return getFirstname() + " " + getLastname();
-    }
-
     @Override
     public String getName() {
         return email;
     }
 
+    public String fullName() {
+        return getName() + " " + getFatherSurname() + " " + getMotherSurname();
+    }
+
     public String getFullName() {
-        return firstname + " " + lastname;
+        return name + " " + fatherSurname + " " + motherSurname;
     }
 }

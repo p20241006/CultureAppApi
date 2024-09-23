@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/USR_CULTURE_APP
-    username: postgres
-    password: admin
+    url: jdbc:postgresql://p20241006.postgres.database.azure.com:5432/USR_CULTURE_APP
+    username: azure_admin
+    password: p20241006$
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:

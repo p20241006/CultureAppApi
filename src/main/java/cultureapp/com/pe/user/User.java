@@ -41,7 +41,7 @@ import static jakarta.persistence.FetchType.EAGER;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "_user")
+@Table(name = "USUARIO")
 @EntityListeners(AuditingEntityListener.class)
 public class User implements UserDetails, Principal {
 
@@ -86,8 +86,10 @@ public class User implements UserDetails, Principal {
 
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
+
     @OneToMany(mappedBy = "owner")
     private List<Event> events;
+
     @OneToMany(mappedBy = "user")
     private List<EventTransactionHistory> histories;
 

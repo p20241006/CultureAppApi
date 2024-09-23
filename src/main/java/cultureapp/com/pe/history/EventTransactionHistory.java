@@ -6,6 +6,7 @@ import cultureapp.com.pe.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "USUARIO_EVENTO")
 public class EventTransactionHistory extends BaseEntity {
 
     @ManyToOne
@@ -26,5 +28,6 @@ public class EventTransactionHistory extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
+
 
 }

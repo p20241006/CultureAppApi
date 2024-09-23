@@ -27,7 +27,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "role")
+@Table(name = "ROL")
 @EntityListeners(AuditingEntityListener.class)
 public class Role {
 

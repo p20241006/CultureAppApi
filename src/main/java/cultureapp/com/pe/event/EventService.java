@@ -18,8 +18,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -131,6 +134,36 @@ public class EventService {
                 allScoredEvents.isFirst(),
                 allScoredEvents.isLast()
         );
+    }
+
+    public List<EventResponse> getRandomEventsByCategoryIds(List<Integer> categoryIds) {
+
+        List<Event> events = eventRepository.findEventsByCategoryIds(categoryIds);
+        List<EventResponse> eventsResponse = new java.util.ArrayList<>(events.stream()
+                .map(eventMapper::toEventResponse)
+                .toList());
+
+        Collections.shuffle(eventsResponse);
+
+        // Retornar los primeros 10 eventos, o menos si no hay suficientes
+        return eventsResponse.stream()
+                .limit(10)
+                .collect(Collectors.toList());
+    }
+
+    public List<EventResponse> obtenerProximosEventos(LocalDate fecha, int limite) {
+        List<Event> events = eventRepository.findProximosEventos(fecha);
+        List<EventResponse> eventsResponse = new java.util.ArrayList<>(events.stream()
+                .map(eventMapper::toEventResponse)
+                .toList());
+
+        // Si hay más de 10 eventos, selecciona 10 aleatoriamente
+        if (eventsResponse.size() > limite) {
+            Collections.shuffle(eventsResponse);
+            return eventsResponse.subList(0, limite);
+        }
+
+        return eventsResponse;
     }
 
 }

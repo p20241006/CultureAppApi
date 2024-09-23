@@ -3,10 +3,7 @@ package cultureapp.com.pe.feedback;
 
 import cultureapp.com.pe.common.BaseEntity;
 import cultureapp.com.pe.event.Event;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +16,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(name = "FEEDBACK")
 public class Feedback extends BaseEntity {
 
     @Column

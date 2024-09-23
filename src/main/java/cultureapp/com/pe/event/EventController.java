@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
 @RestController
 @RequestMapping("events")
 @RequiredArgsConstructor
@@ -26,8 +30,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class EventController {
 
     private final EventService service;
+    LocalDate fecha = LocalDate.now();
+    LocalDate fechaFutura = fecha.plusDays(30);
 
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('USER')")
     @PostMapping
     public ResponseEntity<Integer> saveEvent(
             @Valid @RequestBody EventRequest request,
@@ -98,4 +104,18 @@ public class EventController {
         service.uploadEventCoverPicture(file, connectedUser, eventId);
         return ResponseEntity.accepted().build();
     }
+
+    @GetMapping("/proximos")
+    public List<EventResponse> obtenerProximosEventos(@RequestParam(required = false) String fecha) {
+
+        LocalDate fechaInicio;
+
+        if (fecha == null) {
+            fechaInicio = LocalDate.now().plusDays(30);
+        } else {
+            fechaInicio = LocalDate.parse(fecha);
+        }
+        return service.obtenerProximosEventos(fechaInicio, 10);
+    }
+
 }

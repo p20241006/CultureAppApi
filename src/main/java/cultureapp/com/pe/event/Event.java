@@ -3,7 +3,7 @@ package cultureapp.com.pe.event;
 import cultureapp.com.pe.category.Category;
 import cultureapp.com.pe.common.BaseEntity;
 import cultureapp.com.pe.feedback.Feedback;
-import cultureapp.com.pe.history.EventTransactionHistory;
+import cultureapp.com.pe.preference.PreferenceUser;
 import cultureapp.com.pe.region.Region;
 import cultureapp.com.pe.user.User;
 import jakarta.persistence.*;
@@ -24,8 +24,11 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "EVENTO")
-public class Event extends BaseEntity {
+public class Event extends BaseEntity{
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "titulo")
     private String title;
@@ -35,11 +38,11 @@ public class Event extends BaseEntity {
     private LocalDate start_date;
     @Column(name = "fecha_fin")
     private LocalDate end_date;
-    @Column(name = "precio")
+    @Column(name = "costo")
     private Float price;
     @Column(name = "url_evento",length = 10000)
     private String urlEvent;  //isbn
-    @Column(name = "img_evento",length = 10000)
+    @Column(name = "url_img",length = 10000)
     private String imgEvent;  //synopsis
     @Column(name = "compañia")
     private String company;  //bookcover
@@ -58,7 +61,7 @@ public class Event extends BaseEntity {
 
 
     @OneToMany(mappedBy = "event")
-    private List<EventTransactionHistory> histories;
+    private List<PreferenceUser> preferenceUsers;
 
     // Relación muchos a uno con Category
     @ManyToOne(fetch = FetchType.LAZY)
@@ -72,11 +75,11 @@ public class Event extends BaseEntity {
 
     @Transient
     public double getRate() {
-        if (feedbacks == null || feedbacks.isEmpty()) {
+        if (preferenceUsers == null || preferenceUsers.isEmpty()) {
             return 0.0;
         }
-        var rate = this.feedbacks.stream()
-                .mapToDouble(Feedback::getNote)
+        var rate = this.preferenceUsers.stream()
+                .mapToDouble(PreferenceUser::getRating)
                 .average()
                 .orElse(0.0);
         double roundedRate = Math.round(rate * 10.0) / 10.0;

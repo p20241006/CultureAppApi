@@ -3,9 +3,10 @@ package cultureapp.com.pe.event;
 import cultureapp.com.pe.common.PageResponse;
 import cultureapp.com.pe.exception.OperationNotPermittedException;
 import cultureapp.com.pe.file.FileStorageService;
-import cultureapp.com.pe.history.EventTransactionHistory;
-import cultureapp.com.pe.history.EventTransactionHistoryRepository;
+import cultureapp.com.pe.preference.PreferenceUser;
+import cultureapp.com.pe.preference.PreferenceUserRepository;
 import cultureapp.com.pe.user.User;
+import cultureapp.com.pe.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,8 +34,9 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final EventMapper eventMapper;
-    private final EventTransactionHistoryRepository transactionHistoryRepository;
+    private final PreferenceUserRepository preferenceUserRepository;
     private final FileStorageService fileStorageService;
+    private final UserRepository userRepository;
 
     public Integer save(EventRequest request, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
@@ -121,7 +124,7 @@ public class EventService {
     public PageResponse<ScoredEventResponse> findAllScoredEvents(int page, int size, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        Page<EventTransactionHistory> allScoredEvents = transactionHistoryRepository.findAllScoredEvents(pageable, user.getId());
+        Page<PreferenceUser> allScoredEvents = preferenceUserRepository.findAllScoredEvents(pageable, user.getId());
         List<ScoredEventResponse> eventsResponse = allScoredEvents.stream()
                 .map(eventMapper::toScoredEventResponse)
                 .toList();
@@ -164,6 +167,33 @@ public class EventService {
         }
 
         return eventsResponse;
+    }
+
+    public PreferenceUser createOrUpdateRating(Integer eventId, Double rating,Authentication connectedUser) {
+        // Buscar el usuario y el evento por sus IDs
+        User user = ((User) connectedUser.getPrincipal());
+        User user2 = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + user.getId()));
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + eventId));
+
+        // Buscar si ya existe una preferencia para este usuario y evento
+        Optional<PreferenceUser> existingPreference = preferenceUserRepository.findByUserAndEvent(user2, event);
+
+        if (existingPreference.isPresent()) {
+            // Si existe, actualizar el rating
+            PreferenceUser preference = existingPreference.get();
+            preference.setRating(rating);
+            return preferenceUserRepository.save(preference);
+        } else {
+            // Si no existe, crear una nueva preferencia
+            PreferenceUser newPreference = new PreferenceUser();
+            newPreference.setUser(user);
+            newPreference.setEvent(event);
+            newPreference.setRating(rating);
+            return preferenceUserRepository.save(newPreference);
+        }
     }
 
 }

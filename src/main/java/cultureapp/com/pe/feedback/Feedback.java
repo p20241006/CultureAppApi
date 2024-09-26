@@ -19,9 +19,14 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "FEEDBACK")
 public class Feedback extends BaseEntity {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
     @Column
     private Double note;
     private String comment;
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;

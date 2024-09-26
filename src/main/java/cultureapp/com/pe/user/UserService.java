@@ -39,16 +39,26 @@ public class UserService {
     @Autowired
     private UserMapper userMapper;
 
-    public User addedRolePerUser(Integer userId, Integer roleId) {
+    public UserResponse addRoleToUser(Integer userId, String roleName) {
+        // Buscar el usuario por ID
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new RuntimeException("User with id " + userId + " not found"));
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Role newRole = roleRepository.findById(roleId)
-                .orElseThrow(()-> new RuntimeException("Role with id " + roleId + " not found"));
+        // Buscar el rol por nombre
+        Role role = roleRepository.findByName(roleName)
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
-        user.getRoles().add(newRole);
+        // Verificar si el usuario ya tiene ese rol
+        if (user.getRoles().contains(role)) {
+            throw new RuntimeException("El usuario ya tiene este rol");
+        }
 
-        return userRepository.save(user);
+        // Agregar el rol al usuario
+        user.getRoles().add(role);
+        userRepository.save(user); // Guardar los cambios en el usuario
+
+        // Devolver la respuesta del usuario actualizado
+        return new UserMapper().toUserResponse(user);
     }
 
     public UserResponse findById(Integer userId) {
@@ -67,5 +77,28 @@ public class UserService {
 
     }
 
+    @Transactional
+    public UserResponse updateUser(Integer idUser, UserRequest userRequest) {
+        // Obtener el usuario existente
+        User existingUser = userRepository.findById(idUser)
+                .orElseThrow(() -> new EntityNotFoundException("No user found with ID:: " + idUser));
+
+        // Actualizar el usuario existente con los valores del request
+        userMapper.updateUserFromRequest(existingUser, userRequest);
+
+        // Guardar los cambios
+        User updatedUser = userRepository.save(existingUser);
+
+        // Devolver la respuesta convertida
+        return userMapper.toUserResponse(updatedUser);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UserResponse> getUsersWithEnvioFormularioTrue() {
+        List<User> users = userRepository.findByEnvioFormularioTrue(); // Llama al repositorio
+        return users.stream()
+                .map(userMapper::toUserResponse)
+                .toList(); // Convierte a UserResponse
+    }
 
 }

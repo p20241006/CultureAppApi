@@ -2,18 +2,9 @@ package cultureapp.com.pe.user;
 
 
 import cultureapp.com.pe.event.Event;
-import cultureapp.com.pe.history.EventTransactionHistory;
+import cultureapp.com.pe.preference.PreferenceUser;
 import cultureapp.com.pe.role.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +37,7 @@ import static jakarta.persistence.FetchType.EAGER;
 public class User implements UserDetails, Principal {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(name = "nombre", length = 50)
@@ -84,6 +75,24 @@ public class User implements UserDetails, Principal {
     @Column(name="cuenta_activa")
     private boolean enabled;
 
+    @Column(name="nombre_comercial")
+    private String nombreComercial;
+
+    @Column(name="DNI")
+    private String dni;
+
+    @Column(name="email2")
+    private String email2;
+
+    @Column(name="empresa")
+    private String empresa;
+
+    @Column(name="comentario")
+    private String comentario;
+
+    @Column(name="envio_formulario")
+    private Boolean envioFormulario;
+
     @ManyToMany(fetch = EAGER)
     private List<Role> roles;
 
@@ -91,7 +100,7 @@ public class User implements UserDetails, Principal {
     private List<Event> events;
 
     @OneToMany(mappedBy = "user")
-    private List<EventTransactionHistory> histories;
+    private List<PreferenceUser> histories;
 
     @CreatedDate
     @Column(nullable = false, name = "fecha_creacion", updatable = false)

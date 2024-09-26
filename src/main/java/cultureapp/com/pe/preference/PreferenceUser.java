@@ -1,12 +1,9 @@
-package cultureapp.com.pe.history;
+package cultureapp.com.pe.preference;
 
 import cultureapp.com.pe.common.BaseEntity;
 import cultureapp.com.pe.event.Event;
 import cultureapp.com.pe.user.User;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,15 +16,23 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "USUARIO_EVENTO")
-public class EventTransactionHistory extends BaseEntity {
+@Table(name = "PREFERENCIA")
+public class PreferenceUser {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
+
+    @Column(name="rating")
+    private Double rating;
+
+
 
 
 }

@@ -1,8 +1,7 @@
 package cultureapp.com.pe.event;
 
 import cultureapp.com.pe.category.Category;
-import cultureapp.com.pe.file.FileUtils;
-import cultureapp.com.pe.history.EventTransactionHistory;
+import cultureapp.com.pe.preference.PreferenceUser;
 import cultureapp.com.pe.region.Region;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +13,6 @@ public class EventMapper {
                 .title(request.title())
                 .description(request.description())
                 .start_date(request.start_date())
-                .end_date(request.end_date())
                 .price(request.price())
                 .imgEvent(request.imgEvent())
                 .archived(false)
@@ -42,14 +40,14 @@ public class EventMapper {
                 .owner(event.getOwner().fullName())
                 .categoria_id(event.getCategory().getId())
                 .region_id(event.getRegion().getId())
-                .cover(FileUtils.readFileFromLocation(event.getCompany()))
+                //.cover(FileUtils.readFileFromLocation(event.getCompany()))
                 .rate(event.getRate())
                 .archived(event.isArchived())
                 .shareable(event.isShareable())
                 .build();
     }
 
-    public ScoredEventResponse toScoredEventResponse(EventTransactionHistory history) {
+    public ScoredEventResponse toScoredEventResponse(PreferenceUser history) {
         return ScoredEventResponse.builder()
                 .id(history.getEvent().getId())
                 .id_User(history.getUser().getId())

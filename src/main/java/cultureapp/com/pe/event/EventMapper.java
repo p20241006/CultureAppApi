@@ -17,6 +17,7 @@ public class EventMapper {
                 .imgEvent(request.imgEvent())
                 .archived(false)
                 .shareable(request.shareable())
+                .company(request.company())
                 .category(Category.builder()
                         .id(request.categoryId())
                         .build())
@@ -53,8 +54,19 @@ public class EventMapper {
                 .id_User(history.getUser().getId())
                 .title(history.getEvent().getTitle())
                 .description(history.getEvent().getDescription())
+                .start_date(history.getEvent().getStart_date())
+                .end_date(history.getEvent().getEnd_date())
+                .price(history.getEvent().getPrice())
                 .urlEvent(history.getEvent().getUrlEvent())
+                .imgEvent(history.getEvent().getImgEvent())
+                .company(history.getEvent().getCompany())
+                .owner(history.getEvent().getOwner().fullName())
+                .categoria_id(history.getEvent().getCategory().getId())
+                .region_id(history.getEvent().getRegion().getId())
                 .rate(history.getEvent().getRate())
+                .archived(history.getEvent().isArchived())
+                .shareable(history.getEvent().isShareable())
                 .build();
     }
+
 }

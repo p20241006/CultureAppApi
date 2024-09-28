@@ -25,8 +25,7 @@ public interface EventRepository extends JpaRepository<Event, Integer>, JpaSpeci
     List<Event> findEventsByCategoryIds(@Param("categoria_id") List<Integer> categoria_Id);
 
 
-    // Consulta para obtener los eventos más próximos a una fecha dada
-    @Query("SELECT e FROM Event e WHERE e.start_date >= :fecha ORDER BY e.start_date ASC")
-    List<Event> findProximosEventos(LocalDate fecha);
+    @Query(value = "SELECT * FROM EVENTO WHERE FECHA_INICIO BETWEEN :startDate AND :endDate AND ARCHIVADO = false ORDER BY FECHA_INICIO ASC LIMIT 12", nativeQuery = true)
+    List<Event> findTop12UpcomingEvents(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
 }

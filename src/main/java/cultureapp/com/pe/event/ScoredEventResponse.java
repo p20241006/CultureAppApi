@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,9 +18,18 @@ public class ScoredEventResponse {
     private Integer id;
     private Integer id_User;
     private String title;
-    private String description;  //authorName
+    private String description;
+    private LocalDate start_date;
+    private LocalDate end_date;
+    private Float price;
     private String urlEvent;
+    private String imgEvent;
+    private String company;
+    private String owner;
+    private Integer categoria_id;
+    private Integer region_id;
+    private byte[] cover;
     private double rate;
-    private boolean returned;
-    private boolean returnApproved;
+    private boolean archived;
+    private boolean shareable;
 }

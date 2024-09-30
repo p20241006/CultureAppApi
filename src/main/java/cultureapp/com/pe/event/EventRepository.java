@@ -23,7 +23,7 @@ public interface EventRepository extends JpaRepository<Event, Integer>, JpaSpeci
 
 
     // Obtener eventos por una lista de ids de categorías
-    @Query("SELECT e FROM Event e WHERE e.category.id IN :categoria_id")
+    @Query("SELECT e FROM Event e WHERE e.category.id IN :categoria_id AND e.archived=false")
     List<Event> findEventsByCategoryIds(@Param("categoria_id") List<Integer> categoria_Id);
 
 

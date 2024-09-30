@@ -21,10 +21,11 @@ public record EventRequest(
         @NotEmpty(message = "103")
         String imgEvent,
         boolean shareable,
+        boolean archived,
         @NotNull(message = "103")
         @NotEmpty(message = "103")
         String company,
-
+        String urlEvent,
         @NotNull @Min(1)
         Integer categoryId,
         @NotNull @Min(1)

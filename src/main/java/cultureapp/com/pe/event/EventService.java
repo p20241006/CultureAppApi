@@ -1,5 +1,6 @@
 package cultureapp.com.pe.event;
 
+import cultureapp.com.pe.category.Category;
 import cultureapp.com.pe.common.PageResponse;
 
 import cultureapp.com.pe.exception.OperationNotPermittedException;
@@ -7,6 +8,7 @@ import cultureapp.com.pe.favoritos.FavoritoRepository;
 import cultureapp.com.pe.file.FileStorageService;
 import cultureapp.com.pe.preference.PreferenceUser;
 import cultureapp.com.pe.preference.PreferenceUserRepository;
+import cultureapp.com.pe.region.Region;
 import cultureapp.com.pe.user.User;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -185,19 +187,54 @@ public class EventService {
     }
 
     public EventResponse updateEvent(Integer eventId, EventRequest eventRequest) {
+        // Validar si el request es null
+        if (eventRequest == null) {
+            throw new IllegalArgumentException("EventRequest cannot be null");
+        }
+
         Optional<Event> eventOptional = eventRepository.findById(eventId);
 
         if (eventOptional.isPresent()) {
             Event event = eventOptional.get();
 
-            // Actualizar los campos del evento
-            event.setTitle(eventRequest.title());
-            event.setDescription(eventRequest.description());
-            event.setStart_date(eventRequest.start_date());
-            event.setPrice(eventRequest.price());
-            event.setImgEvent(eventRequest.imgEvent());
-            event.setShareable(eventRequest.shareable());
-            event.setCompany(eventRequest.company());
+            // Actualizar los campos del evento solo si no son nulos
+            if (eventRequest.title() != null) {
+                event.setTitle(eventRequest.title());
+            }
+            if (eventRequest.description() != null) {
+                event.setDescription(eventRequest.description());
+            }
+            if (eventRequest.start_date() != null) {
+                event.setStart_date(eventRequest.start_date());
+            }
+            if (eventRequest.price() != null) {
+                event.setPrice(eventRequest.price());
+            }
+            if (eventRequest.imgEvent() != null) {
+                event.setImgEvent(eventRequest.imgEvent());
+            }
+
+            if (eventRequest.urlEvent() != null) {
+                event.setUrlEvent(eventRequest.urlEvent());
+            }
+
+            if (eventRequest.company() != null) {
+                event.setCompany(eventRequest.company());
+            }
+            if (eventRequest.categoryId() != null) {
+                event.setCategory(Category.builder()
+                        .id(eventRequest.categoryId())
+                        .build());
+            }
+            if (eventRequest.regionId() != null) {
+                event.setRegion(Region.builder()
+                        .id(eventRequest.regionId())
+                        .build());
+            }
+            assert eventRequest.start_date() != null;
+            if (eventRequest.start_date().isAfter(LocalDate.now())) {
+                event.setArchived(false);
+            }
 
             // Guardar los cambios
             Event updatedEvent = eventRepository.save(event);

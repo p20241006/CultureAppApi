@@ -45,7 +45,7 @@ public class Event extends BaseEntity{
     private String urlEvent;  //isbn
     @Column(name = "url_img",length = 10000)
     private String imgEvent;  //synopsis
-    @Column(name = "compañia")
+    @Column(name = "compania")
     private String company;  //bookcover
     @Column(name = "archivado")
     private boolean archived;

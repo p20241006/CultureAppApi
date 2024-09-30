@@ -1,14 +1,13 @@
 package cultureapp.com.pe.event;
 
-import cultureapp.com.pe.category.Category;
 import cultureapp.com.pe.common.PageResponse;
+
 import cultureapp.com.pe.exception.OperationNotPermittedException;
+import cultureapp.com.pe.favoritos.FavoritoRepository;
 import cultureapp.com.pe.file.FileStorageService;
 import cultureapp.com.pe.preference.PreferenceUser;
 import cultureapp.com.pe.preference.PreferenceUserRepository;
-import cultureapp.com.pe.region.Region;
 import cultureapp.com.pe.user.User;
-import cultureapp.com.pe.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +38,8 @@ public class EventService {
     private final EventMapper eventMapper;
     private final PreferenceUserRepository preferenceUserRepository;
     private final FileStorageService fileStorageService;
-    private final UserRepository userRepository;
+    private final FavoritoRepository favoritoRepository;
+
 
     public Integer save(EventRequest request, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
@@ -70,6 +71,7 @@ public class EventService {
                 events.isLast()
         );
     }
+
 
     public PageResponse<EventResponse> findAllEventsByOwner(int page, int size, Authentication connectedUser) {
         User user = ((User) connectedUser.getPrincipal());
@@ -158,26 +160,24 @@ public class EventService {
 
 
     public List<EventResponse> getTop12UpcomingEvents() {
-        LocalDate today = LocalDate.now();
-        LocalDate tenDaysLater = today.plusDays(30);
-
-        List<Event> events = eventRepository.findTop12UpcomingEvents(today, tenDaysLater);
-        List<EventResponse> eventsResponse = new java.util.ArrayList<>(events.stream()
-                .map(eventMapper::toEventResponse)
-                .toList());
-
-        return eventsResponse;
+        List<Event> events = eventRepository.findTop12UpcomingEvents();
+        return events.stream()
+                .map(eventMapper::toEventResponse) // Mapea cada evento a su correspondiente EventResponse
+                .collect(Collectors.toList());     // Convierte el Stream en una lista
     }
 
     public void deleteEventByCategoryId(Integer eventId, Authentication connectedUser) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EntityNotFoundException("No event found with ID:: " + eventId));
-        User user = ((User) connectedUser.getPrincipal());
+        User user = (User) connectedUser.getPrincipal();
 
         // Verifica si el usuario es el propietario del evento
         if (!Objects.equals(event.getOwner().getId(), user.getId())) {
             throw new OperationNotPermittedException("You cannot delete others' events");
         }
+
+        // Elimina los favoritos relacionados con el evento
+        favoritoRepository.deleteByEventId(eventId);
 
         // Elimina el evento
         eventRepository.delete(event);
@@ -208,5 +208,34 @@ public class EventService {
         }
     }
 
+    public List<EventResponse> searchEventsByTitle(String searchTerm) {
+        // Busca los eventos usando el repositorio
+        List<Event> events = eventRepository.findByTitleContaining(searchTerm);
 
+        // Mapea los eventos a EventResponse utilizando el mapper
+        return events.stream()
+                .map(eventMapper::toEventResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Scheduled(cron = "0 0 2 * * ?")
+    @Transactional
+    public void archiveExpiredEvents() {
+        LocalDate today = LocalDate.now();
+        // Actualiza los eventos que ya han pasado
+
+        List<Event> eventsToArchive = eventRepository.findEventsToArchive(today);
+
+        // Registrar los eventos que serán actualizados
+        if (!eventsToArchive.isEmpty()) {
+            log.info("Archiving the following events that have passed:");
+            for (Event event : eventsToArchive) {
+                log.info("Event ID: "+ event.getId()+" | Title: "+ event.getTitle());
+            }
+        } else {
+            log.info("No events found to archive.");
+        }
+
+        eventRepository.updateArchivedStatusForPastEvents(today);
+    }
 }

@@ -31,7 +31,6 @@ public class Favorito {
     private Event event;
 
     @Column(name = "isfavorite")
-    private Boolean isFavorite; // true si es favorito, false si no lo es
+    private Boolean isFavorite;
 
-    // Puedes agregar campos de auditoría si es necesario, como fecha de creación o modificación
 }

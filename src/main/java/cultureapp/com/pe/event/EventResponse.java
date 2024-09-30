@@ -33,5 +33,6 @@ public class EventResponse {
     private double rate;
     private boolean archived;
     private boolean shareable;
+    private boolean favorite;
 
 }

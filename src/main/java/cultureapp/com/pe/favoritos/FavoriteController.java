@@ -33,4 +33,10 @@ public class FavoriteController {
                 .map(eventMapper::toEventResponse)
                 .toList();
     }
+
+    @GetMapping("/events/{eventId}")
+    public ResponseEntity<Boolean> checkIfEventIsFavorito(@PathVariable Integer eventId, Authentication connectedUser) {
+        boolean isFavorito = favoritoService.isEventFavorito(eventId, connectedUser);
+        return ResponseEntity.ok(isFavorito);
+    }
 }

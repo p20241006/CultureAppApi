@@ -51,15 +51,18 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-
-        var claims = new HashMap<String, Object>();
         var user = ((User) auth.getPrincipal());
+        var claims = new HashMap<String, Object>();
         claims.put("fullName", user.getFullName());
 
         var jwtToken = jwtService.generateToken(claims, (User) auth.getPrincipal());
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .build();
+    }
+
+    public boolean isEmailTaken(String email) {
+        return userRepository.findByEmail(email).isPresent();
     }
 
 }

@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -58,7 +59,6 @@ public class Event extends BaseEntity{
 
     @OneToMany(mappedBy = "event")
     private List<Feedback> feedbacks;
-
 
     @OneToMany(mappedBy = "event")
     private List<PreferenceUser> preferenceUsers;

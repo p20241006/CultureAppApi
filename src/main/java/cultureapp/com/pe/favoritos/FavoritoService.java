@@ -52,4 +52,10 @@ public class FavoritoService {
                 .map(Favorito::getEvent)
                 .toList();
     }
+
+    public boolean isEventFavorito(Integer eventId, Authentication connectedUser) {
+        User user = (User) connectedUser.getPrincipal();
+        Optional<Favorito> favorito = favoritoRepository.findByUserIdAndEventId(user.getId(), eventId);
+        return favorito.map(Favorito::getIsFavorite).orElse(false);
+    }
 }

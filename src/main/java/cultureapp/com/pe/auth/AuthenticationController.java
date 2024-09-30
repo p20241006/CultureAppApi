@@ -3,17 +3,14 @@ package cultureapp.com.pe.auth;
 import cultureapp.com.pe.event.Event;
 import cultureapp.com.pe.event.EventResponse;
 import cultureapp.com.pe.event.EventService;
+import cultureapp.com.pe.exception.EmailAlreadyExistsException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -40,6 +37,15 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(service.authenticate(request));
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<String> checkEmail(@RequestParam String email) {
+        boolean isTaken = service.isEmailTaken(email);
+        if (isTaken) {
+            throw new EmailAlreadyExistsException("Este email ya se encuentra en uso, elige otro por favor");
+        }
+        return ResponseEntity.ok("Email disponible");
     }
 
 

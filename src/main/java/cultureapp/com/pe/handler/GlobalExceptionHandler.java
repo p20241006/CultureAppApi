@@ -1,14 +1,17 @@
 package cultureapp.com.pe.handler;
 
 import cultureapp.com.pe.exception.ActivationTokenException;
+import cultureapp.com.pe.exception.EmailAlreadyExistsException;
 import cultureapp.com.pe.exception.OperationNotPermittedException;
 import jakarta.mail.MessagingException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashSet;
@@ -125,6 +128,18 @@ public class GlobalExceptionHandler {
                         ExceptionResponse.builder()
                                 .businessErrorDescription("Internal error, please contact the admin")
                                 .error(exp.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ResponseEntity<ExceptionResponse> handleEmailAlreadyExistsException(EmailAlreadyExistsException exp) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(
+                        ExceptionResponse.builder()
+                                .error(exp.getMessage()) // Aquí va el mensaje de error
                                 .build()
                 );
     }

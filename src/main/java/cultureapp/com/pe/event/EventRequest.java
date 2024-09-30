@@ -24,6 +24,7 @@ public record EventRequest(
         @NotNull(message = "103")
         @NotEmpty(message = "103")
         String company,
+
         @NotNull @Min(1)
         Integer categoryId,
         @NotNull @Min(1)

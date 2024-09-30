@@ -1,12 +1,18 @@
 package cultureapp.com.pe.event;
 
 import cultureapp.com.pe.category.Category;
+
 import cultureapp.com.pe.preference.PreferenceUser;
 import cultureapp.com.pe.region.Region;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
 @Service
+@RequiredArgsConstructor
 public class EventMapper {
+
+
     public Event toEvent(EventRequest request) {
         return Event.builder()
                 .id(request.id())
@@ -28,6 +34,7 @@ public class EventMapper {
     }
 
     public EventResponse toEventResponse(Event event) {
+
         return EventResponse.builder()
                 .id(event.getId())
                 .title(event.getTitle())

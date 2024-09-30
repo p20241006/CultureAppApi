@@ -4,6 +4,7 @@ import cultureapp.com.pe.role.Role;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 @Service
@@ -48,7 +49,7 @@ public class UserMapper {
                 .comentario(user.getComentario())
                 .envioFormulario(user.getEnvioFormulario())
                 .roles(user.getRoles().stream()
-                        .map(Role::getName)  // Asume que Role tiene un método getName()
+                        .map(Role::getName)  // Asume que Role tiene un metodo
                         .collect(Collectors.toList()))
                 .build();
     }

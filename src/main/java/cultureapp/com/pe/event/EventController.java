@@ -99,7 +99,9 @@ public class EventController {
 
     @GetMapping("/proximos")
     public ResponseEntity<List<EventResponse>> getTop12UpcomingEvents() {
-        return ResponseEntity.ok(service.getTop12UpcomingEvents());
+        List<EventResponse> upcomingEvents = service.getTop12UpcomingEvents();
+        // Devuelve la lista de eventos próximos con un estado HTTP 200
+        return ResponseEntity.ok(upcomingEvents);
     }
 
     @DeleteMapping("/{eventId}")
@@ -114,6 +116,12 @@ public class EventController {
             @RequestBody EventRequest eventRequest) {
         EventResponse updatedEvent = service.updateEvent(eventId, eventRequest);
         return ResponseEntity.ok(updatedEvent);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<EventResponse>> searchEvents(@RequestParam String query) {
+        List<EventResponse> eventResponses = service.searchEventsByTitle(query);
+        return ResponseEntity.ok(eventResponses);
     }
 
 

@@ -33,7 +33,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 @Server(
                         description = "PROD ENV",
-                        url = "https://serviceevente.api.v1/course"
+                        url = "https://culture-app-api-btcfhmhsacfaardx.canadacentral-01.azurewebsites.net"
                 )
         },
         security = {

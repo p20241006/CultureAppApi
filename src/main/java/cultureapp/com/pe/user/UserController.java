@@ -44,11 +44,7 @@ public class UserController {
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Integer id,
             @RequestBody UserRequest userRequest) {
-
-        // Llamar al servicio para actualizar el usuario
         UserResponse updatedUser = userService.updateUser(id, userRequest);
-
-        // Devolver la respuesta HTTP con el usuario actualizado
         return ResponseEntity.ok(updatedUser);
     }
 

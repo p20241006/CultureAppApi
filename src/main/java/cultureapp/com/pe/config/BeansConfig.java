@@ -52,8 +52,8 @@ public class BeansConfig {
     public CorsFilter corsFilter() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(Collections.singletonList("https://p20241006cultureapp.netlify.app/"));
+        config.setAllowCredentials(false);
+        config.setAllowedOrigins(Collections.singletonList("*"));
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.ORIGIN,
                 HttpHeaders.CONTENT_TYPE,

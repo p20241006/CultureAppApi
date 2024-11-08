@@ -26,16 +26,6 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
                 termsOfService = "Terms of service"
         ),
-        servers = {
-                @Server(
-                        description = "Local ENV",
-                        url = "http://localhost:8088/api/v1"
-                ),
-                @Server(
-                        description = "PROD ENV",
-                        url = "https://culture-app-api-btcfhmhsacfaardx.canadacentral-01.azurewebsites.net"
-                )
-        },
         security = {
                 @SecurityRequirement(
                         name = "bearerAuth"
